@@ -1,10 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <title>Conversor XLS para XLSX</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+  <div class="bg-white p-10 rounded-2xl shadow-lg w-full max-w-md text-center">
+    <h1 class="text-2xl font-bold mb-4">Conversor de Arquivos .XLS</h1>
+    <form id="formulario" enctype="multipart/form-data">
+      <input type="file" name="files" multiple accept=".xls" class="mb-4" required>
+      <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg">
+        Converter para XLSX
+      </button>
+    </form>
+    <div id="mensagem" class="mt-4 text-green-600 font-semibold hidden">
+      Arquivos convertidos com sucesso!
+    </div>
+  </div>
 
+  <script>
+    const form = document.getElementById('formulario');
+    const mensagem = document.getElementById('mensagem');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const response = await fetch('/converter', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'convertidos.zip';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        mensagem.classList.remove('hidden');
+      } else {
+        alert('Erro ao converter os arquivos');
+      }
+    });
+  </script>
 </body>
 </html>
